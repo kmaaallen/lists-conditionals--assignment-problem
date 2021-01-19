@@ -1,19 +1,45 @@
 import React, { Component } from 'react';
 import './App.css';
+import CharComponent from './CharComponent/CharComponent';
 import ValidationComponent from './ValidationComponent/ValidationComponent';
 
 class App extends Component {
 
   state = {
+    word: '',
     length: 0,
   }
 
 checkLengthHandler = (event) => {
   let word = event.target.value;
- this.setState({length: word.length});
+ this.setState({length: word.length, word: word});
+}
+
+deleteCharacterHandler = (index) => {
+  var arr = this.state.word.split('');
+  arr.splice(index, 1);
+  arr = arr.join('');
+  this.setState({word: arr, length: arr.length});
 }
 
   render() {
+
+    let list = null;
+
+    if(this.state.length > 0){
+      list = (
+        <div>
+        {this.state.word.split('').map((letter, index) => {
+          return (
+            <CharComponent 
+            letter={letter} 
+            click={() => this.deleteCharacterHandler(index)}
+            key={index}/>
+          )
+        })}
+        </div>
+      )
+    }
     return (
       <div className="App">
         <ol>
@@ -27,9 +53,10 @@ checkLengthHandler = (event) => {
         <p>Hint: Keep in mind that JavaScript strings are basically arrays!</p>
 
 
-        <input type='text' onChange={(event) => this.checkLengthHandler(event)} />
+        <input type='text' value={this.state.word} onChange={(event) => this.checkLengthHandler(event)} />
         <p>{this.state.length}</p>
         <ValidationComponent length={this.state.length}/>
+        {list}
       </div>
     );
   }
